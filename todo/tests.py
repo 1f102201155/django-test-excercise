@@ -9,6 +9,7 @@ class SampleTestCase(TestCase):
     def test_sample1(self):
         self.assertEqual(1+2, 3)
 
+
 class TaskModelTestCase(TestCase):
     def test_crate_task1(self):
         due = timezone.make_aware(datetime(2023, 6, 30, 23, 59, 59))
@@ -23,7 +24,7 @@ class TaskModelTestCase(TestCase):
     def test_create_task2(self):
         task = Task(title='task2')
         task.save()
-
+        
         task=Task.objects.get(pk=task.pk)
         self.assertEqual(task.title, 'task2')
         self.assertFalse(task.completed)
@@ -55,7 +56,7 @@ class TaskModelTestCase(TestCase):
 
 class TodoViewTestCase(TestCase):
     def test_index_get(self):
-        client=Client()
+        client = Client()
         response = client.get('/')
 
         self.assertEqual(response.status_code, 200)
@@ -63,7 +64,7 @@ class TodoViewTestCase(TestCase):
         self.assertEqual(len(response.context['tasks']), 0)
 
     def test_index_post(self):
-        client=Client()
+        client = Client()
         data = {'title': 'Test Task', 'due_at': '2023-06-30 23:59:59'}
         response = client.post('/', data)
 
@@ -89,12 +90,10 @@ class TodoViewTestCase(TestCase):
         task1.save()
         task2 = Task(title='task2', due_at=timezone.make_aware(datetime(2023, 8, 1)))
         task2.save()
-        client=Client()
+        client = Client()
         response=client.get('/?order=due')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.templates[0].name, 'todo/index.html')
         self.assertEqual(response.context['tasks'][0], task1)
         self.assertEqual(response.context['tasks'][1], task2)
-
-
